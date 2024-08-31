@@ -12,7 +12,7 @@ let powerFlow: PowerFlow;
 function init() {
   powerflowCanvas.width = window.innerWidth;
   powerflowCanvas.height = window.innerHeight;
- 
+
   if (powerflowCanvas) {
     viewPort = new ViewPort(powerflowCanvas);
     powerFlow = new PowerFlow(viewPort);

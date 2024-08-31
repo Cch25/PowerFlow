@@ -48,7 +48,7 @@ export class PowerFlow {
     this.context.fillText(
       `Touched square: ${obj.label} ${obj.pos.x}, ${obj.pos.y}`,
       obj.pos.x + 50,
-      obj.pos.y 
+      obj.pos.y
     );
   }
 

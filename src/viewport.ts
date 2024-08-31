@@ -75,7 +75,7 @@ export class ViewPort {
   };
 
   private mouseDown = (e: MouseEvent): void => {
-    if (e.button === 0) {
+    if (e.button === 0 && e.ctrlKey) {
       this.drag.start = this.getMouse(e);
       this.drag.active = true;
     }
@@ -101,11 +101,17 @@ export class ViewPort {
   };
 
   private mouseWheel = (e: Event): void => {
-    const direction = Math.sign((e as WheelEvent).deltaY);
-    const step = 0.1;
-    this.options.zoom += direction * step;
-    const minZoom = Math.max(this.options.minZoom ?? 0.1, 0.1);
-    const maxZoom = Math.min(this.options.maxZoom ?? 10, 10);
-    this.options.zoom = Math.max(minZoom, Math.min(maxZoom, this.options.zoom));
+    if ((e as WheelEvent).ctrlKey) {
+      e.preventDefault();
+      const direction = Math.sign((e as WheelEvent).deltaY);
+      const step = 0.1;
+      this.options.zoom += direction * step;
+      const minZoom = Math.max(this.options.minZoom ?? 0.1, 0.1);
+      const maxZoom = Math.min(this.options.maxZoom ?? 10, 10);
+      this.options.zoom = Math.max(
+        minZoom,
+        Math.min(maxZoom, this.options.zoom)
+      );
+    }
   };
 }
