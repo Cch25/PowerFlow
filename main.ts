@@ -1,24 +1,31 @@
 import { PowerFlow } from "./src/powerflow";
+import { ViewPort } from "./src/viewport";
 import "./styles.scss";
 
 const powerflowCanvas = document.getElementById(
   "powerflow"
 ) as HTMLCanvasElement;
 
-window.addEventListener("resize", resizeCanvas, false);
+let viewPort: ViewPort;
+let powerFlow: PowerFlow;
 
-function resizeCanvas() {
+function init() {
   powerflowCanvas.width = window.innerWidth;
   powerflowCanvas.height = window.innerHeight;
-
-  render();
-}
-
-resizeCanvas();
-
-function render(): void {
+ 
   if (powerflowCanvas) {
-    return new PowerFlow(powerflowCanvas).draw();
+    viewPort = new ViewPort(powerflowCanvas);
+    powerFlow = new PowerFlow(viewPort);
+  } else {
+    throw new Error("Unable to initialize canvas.");
   }
-  throw new Error("Unable to initialize canvas.");
+  animate();
 }
+
+function animate() {
+  viewPort.reset();
+  powerFlow.draw();
+  requestAnimationFrame(animate);
+}
+
+init();
