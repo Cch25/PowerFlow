@@ -7,5 +7,6 @@ export class Point {
     this.y = y;
   }
 
+  public static new = (x: number, y: number): Point => new Point(x, y);
   public static zero = () => new Point(0, 0);
 }

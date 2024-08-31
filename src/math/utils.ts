@@ -9,4 +9,7 @@ export class PfMath {
 
   public static subtract = (pointA: Point, pointB: Point): Point =>
     new Point(pointA.x - pointB.x, pointA.y - pointB.y);
+
+  public static distanceTo = (pointA: Point, pointB: Point): number =>
+    Math.hypot(pointA.x - pointB.x, pointA.y - pointB.y);
 }
