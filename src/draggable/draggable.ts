@@ -10,18 +10,18 @@ export class Draggable {
 
   public move(pos: Point | null) {
     if (pos) {
-      window.addEventListener(
+      this.viewPort.canvas.addEventListener(
         "mousedown",
         (e) => (this.isMouseDown = e.button === 0)
       );
-      window.addEventListener("mousemove", (e) => {
+      this.viewPort.canvas.addEventListener("mousemove", (e) => {
         if (this.isMouseDown && pos) {
           const mouse = this.viewPort.getMouse(e, true);
           pos.x = mouse.x;
           pos.y = mouse.y;
         }
       });
-      window.addEventListener("mouseup", () => {
+      this.viewPort.canvas.addEventListener("mouseup", () => {
         this.isMouseDown = false;
         pos = null;
       });
