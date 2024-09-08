@@ -18,7 +18,7 @@ type ViewPortOptions = {
 
 export class ViewPort {
   public readonly context: CanvasRenderingContext2D;
-  private readonly options: ViewPortOptions;
+  public readonly options: ViewPortOptions;
   private drag: ViewPortDragOptions;
 
   constructor(public readonly canvas: HTMLCanvasElement) {
@@ -72,6 +72,7 @@ export class ViewPort {
     this.canvas.addEventListener("mousedown", this.mouseDown.bind(this));
     this.canvas.addEventListener("mousemove", this.mouseMove.bind(this));
     this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));
+    this.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
   };
 
   private mouseDown = (e: MouseEvent): void => {

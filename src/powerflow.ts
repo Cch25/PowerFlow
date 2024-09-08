@@ -1,3 +1,4 @@
+import { Draggable } from "./draggable/draggable";
 import { PfMath } from "./math/utils";
 import { Point } from "./primitives/point";
 import { ViewPort } from "./viewport";
@@ -6,6 +7,7 @@ type PFObject = {
   label: string;
   pos: Point;
 };
+const RADIUS = 50;
 
 export class PowerFlow {
   private readonly context: CanvasRenderingContext2D;
@@ -19,15 +21,26 @@ export class PowerFlow {
 
   constructor(private readonly viewPort: ViewPort) {
     this.context = this.viewPort.context;
-
-    this.viewPort.canvas.addEventListener("mousemove", (e) => {
-      for (const square of this.pfObjects) {
-        if (
-          PfMath.distanceTo(square.pos, this.viewPort.getMouse(e, true)) < 50
-        ) {
-          this.foundPfObj = square;
-          break;
+    const draggable = new Draggable(this.viewPort);
+    let nbr = 1;
+    this.viewPort.canvas.addEventListener("mousedown", (e) => {
+      if (e.button === 0) {
+        const point = PfMath.getNearestPoint(
+          this.viewPort.getMouse(e, true),
+          this.pfObjects.map((p) => p.pos),
+          RADIUS
+        );
+        if (point) {
+          draggable.move(point);
         }
+      }
+
+      if (e.button === 2) {
+        const mouse = this.viewPort.getMouse(e, true);
+        this.pfObjects.push({
+          label: `New ${nbr++}`,
+          pos: Point.new(mouse.x, mouse.y)
+        });
       }
     });
   }
@@ -56,7 +69,7 @@ export class PowerFlow {
     this.context.save();
     this.context.beginPath();
     this.context.translate(pfObj.pos.x / 2, pfObj.pos.y / 2);
-    this.context.arc(pfObj.pos.x / 2, pfObj.pos.y / 2, 50, 0, 2 * Math.PI);
+    this.context.arc(pfObj.pos.x / 2, pfObj.pos.y / 2, RADIUS, 0, 2 * Math.PI);
     this.context.fillStyle = "#cc22c1";
     this.context.strokeStyle = "#a2a2a2";
     this.context.fill();
