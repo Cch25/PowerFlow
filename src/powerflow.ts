@@ -1,5 +1,6 @@
 import { Draggable } from "./draggable/draggable";
 import { PfMath } from "./math/utils";
+import { ShowGrid } from "./options/show-grid";
 import { Point } from "./primitives/point";
 import { ViewPort } from "./viewport";
 
@@ -11,8 +12,7 @@ const RADIUS = 50;
 
 export class PowerFlow {
   private readonly context: CanvasRenderingContext2D;
-  private foundPfObj: PFObject | null = null;
-
+  private readonly showGrid: ShowGrid;
   private pfObjects: PFObject[] = [
     { label: "A", pos: Point.new(50, 50) },
     { label: "B", pos: Point.new(-200, -200) },
@@ -22,6 +22,8 @@ export class PowerFlow {
   constructor(private readonly viewPort: ViewPort) {
     this.context = this.viewPort.context;
     const draggable = new Draggable(this.viewPort);
+    this.showGrid = new ShowGrid(this.viewPort);
+
     let nbr = 1;
     this.viewPort.canvas.addEventListener("mousedown", (e) => {
       if (e.button === 0) {
@@ -46,23 +48,11 @@ export class PowerFlow {
   }
 
   public draw() {
+    this.showGrid.draw();
+    
     for (const pfObj of this.pfObjects) {
       this.drawCircle(pfObj);
     }
-
-    if (this.foundPfObj) {
-      this.drawText(this.foundPfObj);
-    }
-  }
-
-  private drawText(obj: PFObject) {
-    this.context.fillStyle = "#aa12aa";
-    this.context.font = "19px serif";
-    this.context.fillText(
-      `Touched square: ${obj.label} ${obj.pos.x}, ${obj.pos.y}`,
-      obj.pos.x + 50,
-      obj.pos.y
-    );
   }
 
   private drawCircle(pfObj: PFObject) {
