@@ -1,5 +1,6 @@
 import { Draggable } from "./draggable/draggable";
 import { PfMath } from "./math/utils";
+import { FollowingEyes } from "./options/following-eyes";
 import { ShowGrid } from "./options/show-grid";
 import { Point } from "./primitives/point";
 import { ViewPort } from "./viewport";
@@ -19,8 +20,12 @@ export class PowerFlow {
     { label: "C", pos: Point.new(-150, -50) }
   ];
 
+  private readonly followingEyes: FollowingEyes;
+
   constructor(private readonly viewPort: ViewPort) {
     this.context = this.viewPort.context;
+    this.followingEyes = new FollowingEyes(viewPort);
+
     const draggable = new Draggable(this.viewPort);
     this.showGrid = new ShowGrid(this.viewPort);
 
@@ -49,7 +54,8 @@ export class PowerFlow {
 
   public draw() {
     this.showGrid.draw();
-    
+    this.followingEyes.suspect();
+
     for (const pfObj of this.pfObjects) {
       this.drawCircle(pfObj);
     }
