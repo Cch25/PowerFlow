@@ -1,9 +1,8 @@
 import { ViewPort } from "../../viewport";
 import { Point } from "../point";
-import { EventEmitter, ShapeEventMap } from "../../core/event-emitter";
 import { Shape } from "./shape";
 
-export type LineConfig = {
+type LineConfig = {
   points: Point[];
   stroke: string;
   strokeWidth: number;

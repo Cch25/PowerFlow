@@ -1,11 +1,10 @@
 import { ViewPort } from "../../viewport";
 import { Point } from "../point";
 import { DraggableManager } from "../../draggable/draggable-manager";
-import { EventEmitter, ShapeEventMap } from "../../core/event-emitter";
 import { Draggable } from "../../draggable/draggable.model";
 import { Shape } from "./shape";
 
-export type RectConfig = {
+type RectConfig = {
   x: number;
   y: number;
   width: number;

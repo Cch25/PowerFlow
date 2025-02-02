@@ -1,13 +1,14 @@
 import { Layer } from "../core/layer";
 import { Point } from "../primitives/point";
-import { ShapeFactory } from "../primitives/shapes/shape-factory";
+import { Line } from "../primitives/shapes/line";
+import { Rect } from "../primitives/shapes/rect";
 import { SetUpLayer } from "./setup.layer";
 
 export class ShapesLayer implements SetUpLayer {
   public init(): Layer {
     const layer = new Layer();
 
-    const rect1 = ShapeFactory.Rect({
+    const rect1 = new Rect({
       x: -250,
       y: -155,
       width: 100,
@@ -18,7 +19,7 @@ export class ShapesLayer implements SetUpLayer {
       draggable: true
     });
 
-    const rect2 = ShapeFactory.Rect({
+    const rect2 = new Rect({
       x: 100,
       y: -50,
       width: 100,
@@ -29,7 +30,7 @@ export class ShapesLayer implements SetUpLayer {
       draggable: true
     });
 
-    const line = ShapeFactory.Line({
+    const line = new Line({
       lineJoin: "round",
       points: [
         Point.new(-200, -155),
