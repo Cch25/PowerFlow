@@ -1,9 +1,9 @@
-import { PfMath } from "../math/utils";
-import { Point } from "../primitives/point";
-import { Shape } from "../primitives/shapes/shape";
-import { ViewPort } from "../viewport";
+import { PfMath } from "../../math/utils";
+import { Point } from "../point";
+import { Shape } from "../shapes/shape";
+import { ViewPort } from "../../viewport";
 
-export class FollowingEyes implements Shape {
+export class FollowingEyes extends Shape {
   private readonly pupilRadius = 10;
   private readonly eyeBallRadius = 20;
   private readonly distanceBetweenEyes = 45;
@@ -34,6 +34,7 @@ export class FollowingEyes implements Shape {
   private viewPort: ViewPort | null = null;
 
   constructor() {
+    super();
     window.addEventListener("mousemove", (e) => {
       if (this.viewPort) {
         const { dx: a, dy: b } = this.follow(e, this.leftEyeCenter);
@@ -79,7 +80,6 @@ export class FollowingEyes implements Shape {
     context.beginPath();
     context.arc(eye.x, eye.y, this.eyeBallRadius, 0, 2 * Math.PI);
     context.stroke();
- 
   }
 
   private drawPupil(pos: Point, context: CanvasRenderingContext2D) {

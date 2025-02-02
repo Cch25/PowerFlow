@@ -44,8 +44,10 @@ export class DraggableService {
   }
 
   private handleDrag(e: MouseEvent) {
-    if (!this.isDragging || !this.currentTarget) return;
-
+    if (!this.isDragging || !this.currentTarget) {
+      return;
+    }
+    
     const mouse = this.viewPort.getMouse(e);
     const newPoint = Point.new(
       mouse.x - this.dragOffset.x,

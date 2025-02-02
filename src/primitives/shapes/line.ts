@@ -10,7 +10,7 @@ export type LineConfig = {
   lineJoin: CanvasLineJoin;
 };
 
-export class Line extends EventEmitter<ShapeEventMap> implements Shape {
+export class Line extends Shape {
   constructor(private readonly config: LineConfig) {
     super();
   }

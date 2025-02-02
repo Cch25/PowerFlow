@@ -1,5 +1,6 @@
+import { EventEmitter, ShapeEventMap } from "../../core/event-emitter";
 import { ViewPort } from "../../viewport";
 
-export interface Shape {
-  draw(viewPort: ViewPort): void;
+export abstract class Shape extends EventEmitter<ShapeEventMap> {
+  abstract draw(viewPort: ViewPort): void;
 }

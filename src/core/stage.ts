@@ -1,4 +1,5 @@
 import { DraggableService } from "../draggable/draggable.service";
+import { SetUpLayer } from "../layers/setup.layer";
 import { ViewPort } from "../viewport";
 import { Layer } from "./layer";
 
@@ -24,8 +25,8 @@ export class Stage {
     this.animate();
   }
 
-  public add(layer: Layer) {
-    this.layers.push(layer);
+  public add(layer: SetUpLayer) {
+    this.layers.push(layer.init());
   }
 
   private animate() {

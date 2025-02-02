@@ -16,10 +16,7 @@ export type RectConfig = {
   draggable: boolean;
 };
 
-export class Rect
-  extends EventEmitter<ShapeEventMap>
-  implements Shape, Draggable
-{
+export class Rect extends Shape implements Draggable {
   private position: Point;
 
   constructor(private readonly config: RectConfig) {
