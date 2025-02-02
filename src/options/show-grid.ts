@@ -3,7 +3,7 @@ import { ViewPort } from "../viewport";
 const space = 37.79; //1cm
 const dotRadius = 1;
 
-export class ShowGrid {
+export class GridDot {
   constructor(private readonly viewPort: ViewPort) {}
 
   public draw(zoom: number = 0.8) {

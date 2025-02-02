@@ -1,30 +1,66 @@
 import { Point } from "../primitives/point";
+import { Shape } from "../primitives/shapes/shape";
+import { ShapeManager } from "../primitives/shapes/shape-manager";
 import { ViewPort } from "../viewport";
 
 export class Draggable {
-  private isMouseDown = false;
+  private readonly canvas: HTMLCanvasElement;
+  private isDragging = false;
+  private dragOffset = Point.new(0, 0);
+  private currentTarget: Shape | null = null;
 
   constructor(private readonly viewPort: ViewPort) {
-    this.viewPort = viewPort;
+    this.canvas = this.viewPort.canvas;
   }
 
-  public move(pos: Point | null) {
-    if (pos) {
-      this.viewPort.canvas.addEventListener(
-        "mousedown",
-        (e) => (this.isMouseDown = e.button === 0)
+  public init() {
+    this.attachListeners();
+  }
+
+  private attachListeners() {
+    this.canvas.addEventListener("mousedown", (e) => this.startDrag(e));
+    this.canvas.addEventListener("mouseup", () => this.stopDrag());
+    this.canvas.addEventListener("mousemove", (e) => this.handleDrag(e));
+  }
+
+  private startDrag(e: MouseEvent) {
+    const mouse = this.viewPort.getMouse(e);
+    const target = this.findDraggableShape(mouse);
+
+    if (target) {
+      this.isDragging = true;
+      this.currentTarget = target;
+
+      this.dragOffset = Point.new(
+        mouse.x - target.getPosition().x,
+        mouse.y - target.getPosition().y
       );
-      this.viewPort.canvas.addEventListener("mousemove", (e) => {
-        if (this.isMouseDown && pos) {
-          const mouse = this.viewPort.getMouse(e, true);
-          pos.x = mouse.x;
-          pos.y = mouse.y;
-        }
-      });
-      this.viewPort.canvas.addEventListener("mouseup", () => {
-        this.isMouseDown = false;
-        pos = null;
-      });
     }
+  }
+
+  private stopDrag() {
+    this.isDragging = false;
+    this.currentTarget = null;
+  }
+
+  private handleDrag(e: MouseEvent) {
+    if (!this.isDragging || !this.currentTarget) return;
+
+    const mouse = this.viewPort.getMouse(e);
+    const newPoint = Point.new(
+      mouse.x - this.dragOffset.x,
+      mouse.y - this.dragOffset.y
+    );
+
+    this.currentTarget.setPosition(newPoint);
+    this.currentTarget.emit("dragmove", newPoint);
+  }
+
+  private findDraggableShape(mouse: Point): Shape | null {
+    return (
+      ShapeManager.getShapes().find(
+        (shape) => shape.isDraggable() && shape.isInside(mouse)
+      ) || null
+    );
   }
 }
