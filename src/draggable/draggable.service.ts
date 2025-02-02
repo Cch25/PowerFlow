@@ -1,13 +1,13 @@
 import { Point } from "../primitives/point";
-import { Shape } from "../primitives/shapes/shape";
-import { ShapeManager } from "../primitives/shapes/shape-manager";
+import { DraggableManager } from "./draggable-manager";
 import { ViewPort } from "../viewport";
+import { Draggable } from "./draggable.model";
 
-export class Draggable {
+export class DraggableService {
   private readonly canvas: HTMLCanvasElement;
   private isDragging = false;
   private dragOffset = Point.new(0, 0);
-  private currentTarget: Shape | null = null;
+  private currentTarget: Draggable | null = null;
 
   constructor(private readonly viewPort: ViewPort) {
     this.canvas = this.viewPort.canvas;
@@ -56,9 +56,9 @@ export class Draggable {
     this.currentTarget.emit("dragmove", newPoint);
   }
 
-  private findDraggableShape(mouse: Point): Shape | null {
+  private findDraggableShape(mouse: Point): Draggable | null {
     return (
-      ShapeManager.getShapes().find(
+      DraggableManager.getDraggableShapes().find(
         (shape) => shape.isDraggable() && shape.isInside(mouse)
       ) || null
     );

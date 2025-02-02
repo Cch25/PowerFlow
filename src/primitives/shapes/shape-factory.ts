@@ -1,13 +1,12 @@
-import { Draggable } from "../../draggable/draggable";
-import { ViewPort } from "../../viewport";
+import { Line, LineConfig } from "./line";
 import { Rect, RectConfig } from "./rect";
 
-export class PfShapeFactory {
-  constructor(private readonly viewPort: ViewPort) {
-    new Draggable(this.viewPort).init();
+export class ShapeFactory {
+  public static Rect(rect: RectConfig) {
+    return new Rect(rect);
   }
 
-  public Rect(rect: RectConfig) {
-    return new Rect(rect, this.viewPort);
+  public static Line(line: LineConfig) {
+    return new Line(line);
   }
 }

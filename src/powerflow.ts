@@ -1,19 +1,23 @@
-import { FollowingEyes } from "./options/following-eyes";
-import { GridDot } from "./options/show-grid";
-import { PfLayer } from "./primitives/layer";
-import { PfShapeFactory } from "./primitives/shapes/shape-factory";
-import { ViewPort } from "./viewport";
+import { FollowingEyes } from "./features/following-eyes";
+import { Layer as Layer } from "./core/layer";
+import { Point } from "./primitives/point";
+import { ShapeFactory } from "./primitives/shapes/shape-factory";
+import { Stage } from "./core/stage";
 
 export class PowerFlow {
-  private readonly followingEyes: FollowingEyes;
-  private readonly layer: PfLayer;
+  constructor() {
+    const stage = new Stage({
+      canvas: document.getElementById("powerflow") as HTMLCanvasElement
+    });
 
-  constructor(private readonly viewPort: ViewPort) {
-    this.followingEyes = new FollowingEyes(viewPort);
-    this.layer = new PfLayer();
-    const factory = new PfShapeFactory(this.viewPort);
+    const followingEyesLayer = new Layer();
+    followingEyesLayer.add(new FollowingEyes());
 
-    const rect1 = factory.Rect({
+    stage.add(followingEyesLayer);
+
+    const shapesLayer = new Layer();
+
+    const rect1 = ShapeFactory.Rect({
       x: -250,
       y: -155,
       width: 100,
@@ -24,7 +28,7 @@ export class PowerFlow {
       draggable: true
     });
 
-    const rect2 = factory.Rect({
+    const rect2 = ShapeFactory.Rect({
       x: 100,
       y: -50,
       width: 100,
@@ -35,16 +39,29 @@ export class PowerFlow {
       draggable: true
     });
 
-    rect1.on("dragmove", (point) => {
-      console.log(point);
+    const line = ShapeFactory.Line({
+      lineJoin: "round",
+      points: [
+        Point.new(-200, -155),
+        Point.new(-200, -200),
+        Point.new(150, -200),
+        Point.new(150, -50)
+      ],
+      stroke: "black",
+      strokeWidth: 2
     });
 
-    this.layer.add(rect1);
-    this.layer.add(rect2);
+    rect1.on("dragmove", this.onDragMove);
+    rect2.on("dragmove", this.onDragMove);
+
+    shapesLayer.add(rect1);
+    shapesLayer.add(rect2);
+    shapesLayer.add(line);
+
+    stage.add(shapesLayer);
   }
 
-  public draw() {
-    this.followingEyes.suspect();
-    this.layer.draw();
+  private onDragMove(point: Point): void {
+    console.log(point);
   }
 }

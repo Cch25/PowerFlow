@@ -1,8 +1,9 @@
 import { ViewPort } from "../../viewport";
 import { Point } from "../point";
-import { EventEmitter, ShapeEventMap } from "./event-emitter";
+import { DraggableManager } from "../../draggable/draggable-manager";
+import { EventEmitter, ShapeEventMap } from "../../core/event-emitter";
+import { Draggable } from "../../draggable/draggable.model";
 import { Shape } from "./shape";
-import { ShapeManager } from "./shape-manager";
 
 export type RectConfig = {
   x: number;
@@ -15,34 +16,37 @@ export type RectConfig = {
   draggable: boolean;
 };
 
-export class Rect extends EventEmitter<ShapeEventMap> implements Shape {
-  private readonly context: CanvasRenderingContext2D;
+export class Rect
+  extends EventEmitter<ShapeEventMap>
+  implements Shape, Draggable
+{
   private position: Point;
 
-  constructor(private readonly config: RectConfig, viewPort: ViewPort) {
+  constructor(private readonly config: RectConfig) {
     super();
-    this.context = viewPort.context;
+
     this.position = Point.new(config.x, config.y);
 
     if (config.draggable) {
-      ShapeManager.registerShape(this);
+      DraggableManager.registerDraggableShape(this);
     }
   }
 
-  public draw(): void {
-    this.context.beginPath();
-    this.context.rect(
+  public draw(viewPort: ViewPort): void {
+    const context = viewPort.context;
+    context.beginPath();
+    context.rect(
       this.position.x,
       this.position.y,
       this.config.width,
       this.config.height
     );
-    this.context.fillStyle = this.config.fill;
-    this.context.strokeStyle = this.config.stroke;
-    this.context.lineWidth = this.config.strokeWidth;
-    this.context.fill();
-    this.context.stroke();
-    this.context.closePath();
+    context.fillStyle = this.config.fill;
+    context.strokeStyle = this.config.stroke;
+    context.lineWidth = this.config.strokeWidth;
+    context.fill();
+    context.stroke();
+    context.closePath();
   }
 
   public getPosition(): Point {
