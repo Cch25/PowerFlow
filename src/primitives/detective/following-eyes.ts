@@ -3,49 +3,49 @@ import { Point } from "../point";
 import { Shape } from "../shapes/shape";
 import { ViewPort } from "../../viewport";
 
+const pupilRadius = 10;
+const eyeRad = 20;
+const eyeGap = 45;
+const eyePosX = -window.innerWidth / 2.5;
+const eyePosY = -window.innerHeight / 2.5;
+
 export class FollowingEyes extends Shape {
-  private readonly pupilRadius = 10;
-  private readonly eyeBallRadius = 20;
-  private readonly distanceBetweenEyes = 45;
-
-  private readonly leftEyeCenter = new Point(
-    -(window.innerWidth / 2.5) -
-      this.eyeBallRadius -
-      this.distanceBetweenEyes / 2,
-    -window.innerHeight / 2.5
-  );
-  private readonly rightEyeCenter = new Point(
-    -(window.innerWidth / 2.5) -
-      this.eyeBallRadius +
-      this.distanceBetweenEyes / 2,
-    -window.innerHeight / 2.5
-  );
-
-  private readonly leftEyePupil = new Point(
-    this.leftEyeCenter.x,
-    this.leftEyeCenter.y
-  );
-
-  private readonly rightEyePupil = new Point(
-    this.rightEyeCenter.x,
-    this.rightEyeCenter.y
-  );
-
   private viewPort: ViewPort | null = null;
+  private readonly lEye = new Point(eyePosX - eyeRad - eyeGap / 2, eyePosY);
+  private readonly rEye = new Point(eyePosX - eyeRad + eyeGap / 2, eyePosY);
+  private readonly lPupil = new Point(this.lEye.x, this.lEye.y);
+  private readonly rPupil = new Point(this.rEye.x, this.rEye.y);
 
   constructor() {
     super();
-    window.addEventListener("mousemove", (e) => {
-      if (this.viewPort) {
-        const { dx: a, dy: b } = this.follow(e, this.leftEyeCenter);
-        this.leftEyePupil.x = a;
-        this.leftEyePupil.y = b;
+    //Global mousemove event, the eyes should always follow the cursor
+    window.addEventListener("mousemove", (e) => this.updatePupils(e));
+  }
 
-        const { dx: c, dy: d } = this.follow(e, this.rightEyeCenter);
-        this.rightEyePupil.x = c;
-        this.rightEyePupil.y = d;
-      }
-    });
+  private updatePupils(e: MouseEvent): void {
+    if (this.viewPort) {
+      this.updatePupilPosition(e, this.lEye, this.lPupil);
+      this.updatePupilPosition(e, this.rEye, this.rPupil);
+    }
+  }
+
+  private updatePupilPosition(e: MouseEvent, eye: Point, pupil: Point): void {
+    const { dx, dy } = this.computePupilPos(e, eye);
+    pupil.x = dx;
+    pupil.y = dy;
+  }
+
+  private computePupilPos(e: MouseEvent, eyeCenter: Point) {
+    const mousePos = this.viewPort!.getMouse(e);
+    const diffX = mousePos.x - eyeCenter.x;
+    const diffY = mousePos.y - eyeCenter.y;
+    const dist = PfMath.distanceTo(eyeCenter, mousePos);
+    const angle = Math.atan2(diffY, diffX);
+
+    const dx = eyeCenter.x + Math.min(dist, pupilRadius) * Math.cos(angle);
+    const dy = eyeCenter.y + Math.min(dist, pupilRadius) * Math.sin(angle);
+
+    return { dx, dy };
   }
 
   draw(viewPort: ViewPort): void {
@@ -53,38 +53,23 @@ export class FollowingEyes extends Shape {
     if (!this.viewPort) {
       this.viewPort = viewPort;
     }
-    this.drawEyeBall(this.leftEyeCenter, context);
-    this.drawPupil(this.leftEyePupil, context);
 
-    this.drawEyeBall(this.rightEyeCenter, context);
-    this.drawPupil(this.rightEyePupil, context);
+    this.drawEyeBall(this.lEye, context);
+    this.drawPupil(this.lPupil, context);
+
+    this.drawEyeBall(this.rEye, context);
+    this.drawPupil(this.rPupil, context);
   }
 
-  private follow(e: MouseEvent, eyeCenter: Point) {
-    const diff_x = this.viewPort!.getMouse(e).x - eyeCenter.x;
-    const diff_y = this.viewPort!.getMouse(e).y - eyeCenter.y;
-
-    const dist = PfMath.distanceTo(
-      eyeCenter,
-      new Point(this.viewPort!.getMouse(e).x, this.viewPort!.getMouse(e).y)
-    );
-
-    const angle = Math.atan2(diff_y, diff_x);
-
-    const dx = eyeCenter.x + Math.min(dist, this.pupilRadius) * Math.cos(angle);
-    const dy = eyeCenter.y + Math.min(dist, this.pupilRadius) * Math.sin(angle);
-    return { dx, dy };
-  }
-
-  private drawEyeBall(eye: Point, context: CanvasRenderingContext2D) {
+  private drawEyeBall(eye: Point, context: CanvasRenderingContext2D): void {
     context.beginPath();
-    context.arc(eye.x, eye.y, this.eyeBallRadius, 0, 2 * Math.PI);
+    context.arc(eye.x, eye.y, eyeRad, 0, 2 * Math.PI);
     context.stroke();
   }
 
-  private drawPupil(pos: Point, context: CanvasRenderingContext2D) {
+  private drawPupil(pos: Point, context: CanvasRenderingContext2D): void {
     context.beginPath();
-    context.arc(pos.x, pos.y, this.pupilRadius, 0, 2 * Math.PI);
+    context.arc(pos.x, pos.y, pupilRadius, 0, 2 * Math.PI);
     context.fill();
   }
 }

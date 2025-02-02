@@ -1,5 +1,4 @@
 import { Point } from "../primitives/point";
-
  
 export interface ShapeEventMap
   extends Record<string, (...args: any[]) => void> {

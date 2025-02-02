@@ -13,7 +13,7 @@ export class DraggableService {
     this.canvas = this.viewPort.canvas;
   }
 
-  public init() {
+  public listen() {
     this.attachListeners();
   }
 

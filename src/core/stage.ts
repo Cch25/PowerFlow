@@ -18,7 +18,7 @@ export class Stage {
       this.stage.canvas.width = window.innerWidth;
       this.stage.canvas.height = window.innerHeight;
       this.viewPort = new ViewPort(this.stage.canvas);
-      new DraggableService(this.viewPort).init();
+      new DraggableService(this.viewPort).listen();
     } else {
       throw new Error("Unable to initialize canvas.");
     }
