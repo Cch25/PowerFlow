@@ -15,7 +15,7 @@ type RectConfig = {
   draggable: boolean;
 };
 
-export class Rect extends Shape implements Draggable {
+export class Rect extends Draggable implements Shape {
   private position: Point;
 
   constructor(private readonly config: RectConfig) {

@@ -9,7 +9,7 @@ const eyeGap = 45;
 const eyePosX = -window.innerWidth / 2.5;
 const eyePosY = -window.innerHeight / 2.5;
 
-export class FollowingEyes extends Shape {
+export class FollowingEyes implements Shape {
   private viewPort: ViewPort | null = null;
   private readonly lEye = new Point(eyePosX - eyeRad - eyeGap / 2, eyePosY);
   private readonly rEye = new Point(eyePosX - eyeRad + eyeGap / 2, eyePosY);
@@ -17,7 +17,6 @@ export class FollowingEyes extends Shape {
   private readonly rPupil = new Point(this.rEye.x, this.rEye.y);
 
   constructor() {
-    super();
     //Global mousemove event, the eyes should always follow the cursor
     window.addEventListener("mousemove", (e) => this.updatePupils(e));
   }

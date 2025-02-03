@@ -1,9 +1,9 @@
+import { EventEmitter, ShapeEventMap } from "../core/event-emitter";
 import { Point } from "../primitives/point";
 
-export interface Draggable {
-  isDraggable(): boolean;
-  emit(eventName: "dragmove", point: Point): void;
-  isInside(point: Point): boolean;
-  setPosition(point: Point): void;
-  getPosition(): Point;
+export abstract class Draggable  extends EventEmitter<ShapeEventMap> {
+  abstract isDraggable(): boolean;
+  abstract isInside(point: Point): boolean;
+  abstract setPosition(point: Point): void;
+  abstract getPosition(): Point;
 }

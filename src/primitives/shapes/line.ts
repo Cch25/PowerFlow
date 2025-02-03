@@ -9,9 +9,8 @@ type LineConfig = {
   lineJoin: CanvasLineJoin;
 };
 
-export class Line extends Shape {
+export class Line implements Shape {
   constructor(private readonly config: LineConfig) {
-    super();
   }
 
   public draw(viewPort: ViewPort): void {
