@@ -1,7 +1,6 @@
 import { ViewPort } from "../../viewport";
 import { Point } from "../point";
-import { DraggableManager } from "../../draggable/draggable-manager";
-import { Draggable } from "../../draggable/draggable.model";
+import { Draggable, DraggableManager } from "../../draggable/draggable-manager";
 import { Shape } from "./shape";
 
 type RectConfig = {

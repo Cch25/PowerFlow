@@ -1,7 +1,6 @@
 import { Point } from "../primitives/point";
-import { DraggableManager } from "./draggable-manager";
+import { Draggable, DraggableManager } from "./draggable-manager";
 import { ViewPort } from "../viewport";
-import { Draggable } from "./draggable.model";
 
 export class DraggableService {
   private readonly canvas: HTMLCanvasElement;
