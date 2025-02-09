@@ -84,8 +84,8 @@ export class CorrelationLineCalculator {
     candidates = this.removeDuplicatePoints(candidates);
 
     // Use DFS to search for a valid path among the candidate points.
-    // const path = new Dfs(from, to).findPath(offsetStart, offsetEnd, candidates);
-    const path = new AStar(from, to).findPath(
+    // const path = new Dfs(from, to, MIN_DISTANCE).findPath(offsetStart, offsetEnd, candidates);
+    const path = new AStar(from, to, MIN_DISTANCE).findPath(
       offsetStart,
       offsetEnd,
       candidates

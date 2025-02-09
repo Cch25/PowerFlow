@@ -12,7 +12,8 @@ type Node = {
 export class AStar {
   constructor(
     private readonly from: ShapeConfig, // used for line intersection tests
-    private readonly to: ShapeConfig
+    private readonly to: ShapeConfig,
+    private readonly minDistance: number
   ) {}
 
   /**
@@ -29,7 +30,7 @@ export class AStar {
       g: 0,
       h: this.heuristic(start, end),
       f: this.heuristic(start, end),
-      parent: null,
+      parent: null
     });
 
     while (openList.length > 0) {
@@ -72,7 +73,7 @@ export class AStar {
             g: tentativeG,
             h: h,
             f: tentativeG + h,
-            parent: current,
+            parent: current
           };
           openList.push(neighborNode);
         }
@@ -147,7 +148,6 @@ export class AStar {
     return Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y);
   }
 
- 
   /**
    * Returns candidate points adjacent (axis-aligned) to the given point.
    * This method returns the closest candidate in each direction.
@@ -211,22 +211,31 @@ export class AStar {
     const maxY = Math.max(a.y, b.y);
 
     if (a.y === b.y) {
-      return rects.some(
-        (rect) =>
-          minY >= rect.y &&
-          minY <= rect.y + rect.height &&
-          minX <= rect.x + rect.width &&
-          maxX >= rect.x
-      );
+      for (let i = 0; i < rects.length; i++) {
+        let rect = rects[i];
+        if (
+          minY > rect.y - this.minDistance &&
+          minY < rect.y + rect.height + this.minDistance &&
+          minX < rect.x + rect.width + this.minDistance &&
+          maxX > rect.x - 30
+        ) {
+          return true;
+        }
+      }
     } else if (a.x === b.x) {
-      return rects.some(
-        (rect) =>
-          minX >= rect.x &&
-          minX <= rect.x + rect.width &&
-          minY <= rect.y + rect.height &&
-          maxY >= rect.y
-      );
+      for (let i = 0; i < rects.length; i++) {
+        let rect = rects[i];
+        if (
+          minX > rect.x - this.minDistance &&
+          minX < rect.x + rect.width + this.minDistance &&
+          minY < rect.y + rect.height + this.minDistance &&
+          maxY > rect.y - 30
+        ) {
+          return true;
+        }
+      }
     }
+
     return false;
   }
 

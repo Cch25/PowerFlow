@@ -4,7 +4,8 @@ import { ShapeConfig } from "../../primitives/shapes/shape";
 export class Dfs {
   constructor(
     private readonly from: ShapeConfig,
-    private readonly to: ShapeConfig
+    private readonly to: ShapeConfig,
+    private readonly minDistance: number
   ) {}
 
   /**
@@ -111,21 +112,29 @@ export class Dfs {
     const maxY = Math.max(a.y, b.y);
 
     if (a.y === b.y) {
-      return rects.some(
-        (rect) =>
-          minY >= rect.y &&
-          minY <= rect.y + rect.height &&
-          minX <= rect.x + rect.width &&
-          maxX >= rect.x
-      );
+      for (let i = 0; i < rects.length; i++) {
+        let rect = rects[i];
+        if (
+          minY > rect.y - this.minDistance &&
+          minY < rect.y + rect.height + this.minDistance &&
+          minX < rect.x + rect.width + this.minDistance &&
+          maxX > rect.x - 30
+        ) {
+          return true;
+        }
+      }
     } else if (a.x === b.x) {
-      return rects.some(
-        (rect) =>
-          minX >= rect.x &&
-          minX <= rect.x + rect.width &&
-          minY <= rect.y + rect.height &&
-          maxY >= rect.y
-      );
+      for (let i = 0; i < rects.length; i++) {
+        let rect = rects[i];
+        if (
+          minX > rect.x - this.minDistance &&
+          minX < rect.x + rect.width + this.minDistance &&
+          minY < rect.y + rect.height + this.minDistance &&
+          maxY > rect.y - 30
+        ) {
+          return true;
+        }
+      }
     }
     return false;
   }
