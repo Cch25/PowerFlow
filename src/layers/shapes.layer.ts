@@ -1,16 +1,19 @@
 import { Layer } from "../core/layer";
-import { Point } from "../primitives/point";
+import { CorrelationLineCalculator } from "./correlation-line/correlation-line-calculator";
 import { Line } from "../primitives/shapes/line";
 import { Rect } from "../primitives/shapes/rect";
+import { ShapePosition } from "../primitives/shapes/shape";
 import { SetUpLayer } from "./setup.layer";
+import { Circle } from "../primitives/shapes/circle";
 
 export class ShapesLayer implements SetUpLayer {
-  public init(): Layer {
-    const layer = new Layer();
+  private readonly lineCalculation = new CorrelationLineCalculator();
+  private readonly layer: Layer = new Layer();
 
+  public init(): Layer {
     const rect1 = new Rect({
       x: -250,
-      y: -155,
+      y: -40,
       width: 100,
       height: 100,
       fill: "#fbfbfb",
@@ -30,29 +33,47 @@ export class ShapesLayer implements SetUpLayer {
       draggable: true
     });
 
-    const line = new Line({
+    rect1.on("dragmove", (shapeData) =>
+      this.onDragMove(shapeData, rect2.position())
+    );
+    rect2.on("dragmove", (shapeData) =>
+      this.onDragMove(shapeData, rect1.position())
+    );
+
+    this.line = new Line({
       lineJoin: "round",
-      points: [
-        Point.new(-200, -155),
-        Point.new(-200, -200),
-        Point.new(150, -200),
-        Point.new(150, -50)
-      ],
+      points: [],
       stroke: "black",
       strokeWidth: 2
     });
 
-    rect1.on("dragmove", this.onDragMove);
-    rect2.on("dragmove", this.onDragMove);
+    this.layer.add(rect1);
+    this.layer.add(rect2);
+    this.layer.add(this.line);
 
-    layer.add(rect1);
-    layer.add(rect2);
-    layer.add(line);
-
-    return layer;
+    return this.layer;
   }
 
-  private onDragMove(point: Point): void {
-    console.log(point);
+  private addedCircles: Circle[] = [];
+  private line: Line | null = null;
+
+  private onDragMove(from: ShapePosition, to: ShapePosition): void {
+    const points = this.lineCalculation.computeExpectedPoints(from, to);
+    this.addedCircles.forEach((c) => c.remove(this.layer));
+
+    this.addedCircles = points.map((c) => {
+      const circle = new Circle({
+        x: c.x,
+        y: c.y,
+        radius: 2,
+        fill: "red",
+        stroke: "black",
+        strokeWidth: 4
+      });
+      this.layer.add(circle);
+      return circle;
+    });
+
+    this.line?.update(points);
   }
 }

@@ -1,3 +1,4 @@
+import { Layer } from "../../core/layer";
 import { ViewPort } from "../../viewport";
 import { Point } from "../point";
 import { Shape } from "./shape";
@@ -10,8 +11,7 @@ type LineConfig = {
 };
 
 export class Line implements Shape {
-  constructor(private readonly config: LineConfig) {
-  }
+  constructor(private readonly config: LineConfig) {}
 
   public draw(viewPort: ViewPort): void {
     const context = viewPort.context;
@@ -34,5 +34,9 @@ export class Line implements Shape {
 
     context.stroke();
     context.closePath();
+  }
+
+  update(points: Point[]): void {
+    this.config.points = points;
   }
 }

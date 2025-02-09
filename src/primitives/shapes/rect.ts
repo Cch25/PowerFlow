@@ -1,7 +1,7 @@
 import { ViewPort } from "../../viewport";
 import { Point } from "../point";
 import { Draggable, DraggableManager } from "../../draggable/draggable-manager";
-import { Shape } from "./shape";
+import { Shape, ShapePosition } from "./shape";
 
 type RectConfig = {
   x: number;
@@ -15,12 +15,16 @@ type RectConfig = {
 };
 
 export class Rect extends Draggable implements Shape {
-  private position: Point;
+  private shapePos: ShapePosition;
 
   constructor(private readonly config: RectConfig) {
     super();
 
-    this.position = Point.new(config.x, config.y);
+    this.shapePos = {
+      ...Point.new(config.x, config.y),
+      width: config.width,
+      height: config.height
+    };
 
     if (config.draggable) {
       DraggableManager.registerDraggableShape(this);
@@ -31,8 +35,8 @@ export class Rect extends Draggable implements Shape {
     const context = viewPort.context;
     context.beginPath();
     context.rect(
-      this.position.x,
-      this.position.y,
+      this.shapePos.x,
+      this.shapePos.y,
       this.config.width,
       this.config.height
     );
@@ -44,12 +48,12 @@ export class Rect extends Draggable implements Shape {
     context.closePath();
   }
 
-  public getPosition(): Point {
-    return this.position;
+  public position(): ShapePosition {
+    return this.shapePos;
   }
 
-  public setPosition(point: Point): void {
-    this.position = point;
+  public setPosition(data: ShapePosition): void {
+    this.shapePos = data;
   }
 
   public isDraggable(): boolean {
@@ -58,10 +62,11 @@ export class Rect extends Draggable implements Shape {
 
   public isInside(mouse: Point): boolean {
     return (
-      mouse.x >= this.position.x &&
-      mouse.x <= this.position.x + this.config.width &&
-      mouse.y >= this.position.y &&
-      mouse.y <= this.position.y + this.config.height
+      mouse.x >= this.shapePos.x &&
+      mouse.x <= this.shapePos.x + this.config.width &&
+      mouse.y >= this.shapePos.y &&
+      mouse.y <= this.shapePos.y + this.config.height
     );
   }
+ 
 }

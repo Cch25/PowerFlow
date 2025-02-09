@@ -71,4 +71,8 @@ export class FollowingEyes implements Shape {
     context.arc(pos.x, pos.y, pupilRadius, 0, 2 * Math.PI);
     context.fill();
   }
+
+  remove(): void {
+    throw new Error("Method not implemented.");
+  }
 }

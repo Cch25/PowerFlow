@@ -1,15 +1,22 @@
 import { Point } from "../primitives/point";
 import { Draggable, DraggableManager } from "./draggable-manager";
 import { ViewPort } from "../viewport";
+import { ShapePosition } from "../primitives/shapes/shape";
 
 export class DraggableService {
   private readonly canvas: HTMLCanvasElement;
   private isDragging = false;
-  private dragOffset = Point.new(0, 0);
+  private target: ShapePosition;
   private currentTarget: Draggable | null = null;
 
   constructor(private readonly viewPort: ViewPort) {
     this.canvas = this.viewPort.canvas;
+    this.target = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    };
   }
 
   public listen() {
@@ -30,10 +37,14 @@ export class DraggableService {
       this.isDragging = true;
       this.currentTarget = target;
 
-      this.dragOffset = Point.new(
-        mouse.x - target.getPosition().x,
-        mouse.y - target.getPosition().y
-      );
+      this.target = {
+        ...Point.new(
+          mouse.x - target.position().x,
+          mouse.y - target.position().y
+        ),
+        width: target.position().width,
+        height: target.position().height
+      };
     }
   }
 
@@ -46,15 +57,16 @@ export class DraggableService {
     if (!this.isDragging || !this.currentTarget) {
       return;
     }
-    
-    const mouse = this.viewPort.getMouse(e);
-    const newPoint = Point.new(
-      mouse.x - this.dragOffset.x,
-      mouse.y - this.dragOffset.y
-    );
 
-    this.currentTarget.setPosition(newPoint);
-    this.currentTarget.emit("dragmove", newPoint);
+    const mouse = this.viewPort.getMouse(e);
+    const changedShape = {
+      ...Point.new(mouse.x - this.target.x, mouse.y - this.target.y),
+      height: this.target.height,
+      width: this.target.width
+    };
+
+    this.currentTarget.setPosition(changedShape);
+    this.currentTarget.emit("dragmove", changedShape);
   }
 
   private findDraggableShape(mouse: Point): Draggable | null {
