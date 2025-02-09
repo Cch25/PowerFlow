@@ -16,7 +16,7 @@ export class CorrelationLineCalculator {
    * 4. Uses DFS (with adjacent candidates determined by axis-aligned movement) to find a valid route.
    * 5. Returns the route (adding back the original connection points).
    */
-  public computeExpectedPoints(from: ShapeConfig, to: ShapeConfig): Point[] {
+  public getRoute(from: ShapeConfig, to: ShapeConfig, easy = false): Point[] {
     // Determine primary connection points.
     const startPoint = Point.new(from.x + from.width / 2, from.y);
     const endPoint = Point.new(to.x + to.width / 2, to.y);
@@ -27,6 +27,10 @@ export class CorrelationLineCalculator {
 
     // Gather candidate waypoints.
     let candidates: Point[] = [offsetStart, offsetEnd];
+    if (easy) {
+      candidates.push(startPoint, endPoint);
+  }
+
     candidates.push(
       ...this.calculateBoundingBoxPoints([
         offsetStart,
@@ -84,10 +88,13 @@ export class CorrelationLineCalculator {
     candidates = this.removeDuplicatePoints(candidates);
 
     // Use DFS to search for a valid path among the candidate points.
-    // const path = new Dfs(from, to, MIN_DISTANCE).findPath(offsetStart, offsetEnd, candidates);
-    const path = new AStar(from, to, MIN_DISTANCE).findPath(
-      offsetStart,
-      offsetEnd,
+    // const path = new Dfs(from, to, MIN_DISTANCE, easy).findPath(
+    // easy ? startPoint : offsetStart, 
+    // easy ? endPoint : offsetEnd,
+    // candidates);
+    const path = new AStar(from, to, MIN_DISTANCE, easy).findPath(
+      easy ? startPoint : offsetStart,
+      easy ? endPoint : offsetEnd,
       candidates
     );
 
@@ -99,7 +106,9 @@ export class CorrelationLineCalculator {
     const finalRoute = [startPoint, ...path, endPoint];
 
     // Return a new copy of the points.
-    return finalRoute.map((p) => Point.new(p.x, p.y));
+    const routes = finalRoute.map((p) => Point.new(p.x, p.y));
+
+    return routes;
   }
 
   /**

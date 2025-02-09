@@ -47,39 +47,23 @@ export class ShapesLayer implements SetUpLayer {
       strokeWidth: 2
     });
     this.line.update(
-      this.lineCalculation.computeExpectedPoints(
-        rect1.getCofig(),
-        rect2.getCofig()
-      )
+      this.lineCalculation.getRoute(rect1.getCofig(), rect2.getCofig())
     );
 
+    this.layer.add(this.line);
     this.layer.add(rect1);
     this.layer.add(rect2);
-    this.layer.add(this.line);
 
     return this.layer;
   }
-
-  private addedCircles: Circle[] = [];
+ 
   private line: Line | null = null;
 
   private onDragMove(from: ShapeConfig, to: ShapeConfig): void {
-    const points = this.lineCalculation.computeExpectedPoints(from, to);
-    this.addedCircles.forEach((c) => c.remove(this.layer));
-
-    this.addedCircles = points.map((c) => {
-      const circle = new Circle({
-        x: c.x,
-        y: c.y,
-        radius: 2,
-        fill: "red",
-        stroke: "black",
-        strokeWidth: 4
-      });
-      this.layer.add(circle);
-      return circle;
-    });
-
-    this.line?.update(points);
+    let route = this.lineCalculation.getRoute(from, to);
+    if (route.length <= 0) {
+      route = this.lineCalculation.getRoute(from, to, true);
+    }
+    this.line?.update(route);
   }
 }

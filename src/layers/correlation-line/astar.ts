@@ -13,7 +13,8 @@ export class AStar {
   constructor(
     private readonly from: ShapeConfig, // used for line intersection tests
     private readonly to: ShapeConfig,
-    private readonly minDistance: number
+    private readonly minDistance: number,
+    private readonly easy: boolean
   ) {}
 
   /**
@@ -183,7 +184,7 @@ export class AStar {
     let after: Point | null = null;
 
     for (const candidate of candidates) {
-      if (this.lineIntersectsShapes(current, candidate)) {
+      if (!this.easy && this.lineIntersectsShapes(current, candidate)) {
         continue;
       }
       const candidateValue = axis === "x" ? candidate.x : candidate.y;
