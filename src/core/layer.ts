@@ -10,10 +10,8 @@ export class Layer {
     this.shapes.push(shape);
   }
 
-  //we need better architecture to identify the object
   public remove(shape: Shape) {
-    this.shapes = this.shapes.filter((s) => !(s instanceof Circle));
-    console.log(this.shapes);
+    this.shapes = this.shapes.filter(s => s !== shape);
   }
 
   public draw(viewPort: ViewPort) {

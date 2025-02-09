@@ -1,11 +1,11 @@
 import { Point } from "../../primitives/point";
-import { ShapePosition } from "../../primitives/shapes/shape";
+import { ShapeConfig } from "../../primitives/shapes/shape";
 
 const MIN_DISTANCE = 30;
 
 export class CorrelationLineCalculator {
-  private from!: ShapePosition;
-  private to!: ShapePosition;
+  private from!: ShapeConfig;
+  private to!: ShapeConfig;
 
   /**
    * Computes a path (list of points) that connects two shapes.
@@ -18,8 +18,8 @@ export class CorrelationLineCalculator {
    * 5. Returns the route (adding back the original connection points).
    */
   public computeExpectedPoints(
-    from: ShapePosition,
-    to: ShapePosition
+    from: ShapeConfig,
+    to: ShapeConfig
   ): Point[] {
     this.from = from;
     this.to = to;
@@ -107,7 +107,7 @@ export class CorrelationLineCalculator {
    * Given a shape and one of its connection points (on the border),
    * return an offset point outside the shape to start/end the routing.
    */
-  private calculateOffsetPoint(rect: ShapePosition, point: Point): Point {
+  private calculateOffsetPoint(rect: ShapeConfig, point: Point): Point {
     if (point.x === rect.x) {
       return Point.new(rect.x - MIN_DISTANCE, rect.y + rect.height / 2);
     } else if (point.y === rect.y) {

@@ -1,12 +1,12 @@
 import { EventEmitter, ShapeEventMap } from "../core/event-emitter";
 import { Point } from "../primitives/point";
-import { ShapePosition } from "../primitives/shapes/shape";
+import { ShapeConfig } from "../primitives/shapes/shape";
 
 export abstract class Draggable extends EventEmitter<ShapeEventMap> {
   abstract isDraggable(): boolean;
   abstract isInside(point: Point): boolean;
-  abstract position(): ShapePosition;
-  abstract setPosition(data: ShapePosition): void;
+  abstract getCofig(): ShapeConfig;
+  abstract setConfig(data: ShapeConfig): void;
 }
 
 export class DraggableManager {

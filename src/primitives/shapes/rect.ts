@@ -1,7 +1,7 @@
 import { ViewPort } from "../../viewport";
 import { Point } from "../point";
 import { Draggable, DraggableManager } from "../../draggable/draggable-manager";
-import { Shape, ShapePosition } from "./shape";
+import { Shape, ShapeConfig } from "./shape";
 
 type RectConfig = {
   x: number;
@@ -15,12 +15,12 @@ type RectConfig = {
 };
 
 export class Rect extends Draggable implements Shape {
-  private shapePos: ShapePosition;
+  private shapeConfig: ShapeConfig;
 
   constructor(private readonly config: RectConfig) {
     super();
 
-    this.shapePos = {
+    this.shapeConfig = {
       ...Point.new(config.x, config.y),
       width: config.width,
       height: config.height
@@ -35,8 +35,8 @@ export class Rect extends Draggable implements Shape {
     const context = viewPort.context;
     context.beginPath();
     context.rect(
-      this.shapePos.x,
-      this.shapePos.y,
+      this.shapeConfig.x,
+      this.shapeConfig.y,
       this.config.width,
       this.config.height
     );
@@ -48,12 +48,12 @@ export class Rect extends Draggable implements Shape {
     context.closePath();
   }
 
-  public position(): ShapePosition {
-    return this.shapePos;
+  public getCofig(): ShapeConfig {
+    return this.shapeConfig;
   }
 
-  public setPosition(data: ShapePosition): void {
-    this.shapePos = data;
+  public setConfig(data: ShapeConfig): void {
+    this.shapeConfig = data;
   }
 
   public isDraggable(): boolean {
@@ -62,10 +62,10 @@ export class Rect extends Draggable implements Shape {
 
   public isInside(mouse: Point): boolean {
     return (
-      mouse.x >= this.shapePos.x &&
-      mouse.x <= this.shapePos.x + this.config.width &&
-      mouse.y >= this.shapePos.y &&
-      mouse.y <= this.shapePos.y + this.config.height
+      mouse.x >= this.shapeConfig.x &&
+      mouse.x <= this.shapeConfig.x + this.config.width &&
+      mouse.y >= this.shapeConfig.y &&
+      mouse.y <= this.shapeConfig.y + this.config.height
     );
   }
  

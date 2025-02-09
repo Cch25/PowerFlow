@@ -2,7 +2,7 @@ import { Layer } from "../core/layer";
 import { CorrelationLineCalculator } from "./correlation-line/correlation-line-calculator";
 import { Line } from "../primitives/shapes/line";
 import { Rect } from "../primitives/shapes/rect";
-import { ShapePosition } from "../primitives/shapes/shape";
+import { ShapeConfig } from "../primitives/shapes/shape";
 import { SetUpLayer } from "./setup.layer";
 import { Circle } from "../primitives/shapes/circle";
 
@@ -13,7 +13,7 @@ export class ShapesLayer implements SetUpLayer {
   public init(): Layer {
     const rect1 = new Rect({
       x: -250,
-      y: -40,
+      y: 44,
       width: 100,
       height: 100,
       fill: "#fbfbfb",
@@ -34,10 +34,10 @@ export class ShapesLayer implements SetUpLayer {
     });
 
     rect1.on("dragmove", (shapeData) =>
-      this.onDragMove(shapeData, rect2.position())
+      this.onDragMove(shapeData, rect2.getCofig())
     );
     rect2.on("dragmove", (shapeData) =>
-      this.onDragMove(shapeData, rect1.position())
+      this.onDragMove(shapeData, rect1.getCofig())
     );
 
     this.line = new Line({
@@ -46,6 +46,12 @@ export class ShapesLayer implements SetUpLayer {
       stroke: "black",
       strokeWidth: 2
     });
+    this.line.update(
+      this.lineCalculation.computeExpectedPoints(
+        rect1.getCofig(),
+        rect2.getCofig()
+      )
+    );
 
     this.layer.add(rect1);
     this.layer.add(rect2);
@@ -57,7 +63,7 @@ export class ShapesLayer implements SetUpLayer {
   private addedCircles: Circle[] = [];
   private line: Line | null = null;
 
-  private onDragMove(from: ShapePosition, to: ShapePosition): void {
+  private onDragMove(from: ShapeConfig, to: ShapeConfig): void {
     const points = this.lineCalculation.computeExpectedPoints(from, to);
     this.addedCircles.forEach((c) => c.remove(this.layer));
 

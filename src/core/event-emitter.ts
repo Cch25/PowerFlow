@@ -1,9 +1,9 @@
 import { Point } from "../primitives/point";
-import { ShapePosition } from "../primitives/shapes/shape";
+import { ShapeConfig } from "../primitives/shapes/shape";
 
 export interface ShapeEventMap
   extends Record<string, (...args: any[]) => void> {
-  dragmove: (point: ShapePosition) => void;
+  dragmove: (point: ShapeConfig) => void;
 }
 
 export class EventEmitter<

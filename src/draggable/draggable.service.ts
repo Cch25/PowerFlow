@@ -1,17 +1,17 @@
 import { Point } from "../primitives/point";
 import { Draggable, DraggableManager } from "./draggable-manager";
 import { ViewPort } from "../viewport";
-import { ShapePosition } from "../primitives/shapes/shape";
+import { ShapeConfig } from "../primitives/shapes/shape";
 
 export class DraggableService {
   private readonly canvas: HTMLCanvasElement;
   private isDragging = false;
-  private target: ShapePosition;
+  private shapeConfig: ShapeConfig;
   private currentTarget: Draggable | null = null;
 
   constructor(private readonly viewPort: ViewPort) {
     this.canvas = this.viewPort.canvas;
-    this.target = {
+    this.shapeConfig = {
       x: 0,
       y: 0,
       width: 0,
@@ -37,13 +37,13 @@ export class DraggableService {
       this.isDragging = true;
       this.currentTarget = target;
 
-      this.target = {
+      this.shapeConfig = {
         ...Point.new(
-          mouse.x - target.position().x,
-          mouse.y - target.position().y
+          mouse.x - target.getCofig().x,
+          mouse.y - target.getCofig().y
         ),
-        width: target.position().width,
-        height: target.position().height
+        width: target.getCofig().width,
+        height: target.getCofig().height
       };
     }
   }
@@ -60,12 +60,12 @@ export class DraggableService {
 
     const mouse = this.viewPort.getMouse(e);
     const changedShape = {
-      ...Point.new(mouse.x - this.target.x, mouse.y - this.target.y),
-      height: this.target.height,
-      width: this.target.width
+      ...Point.new(mouse.x - this.shapeConfig.x, mouse.y - this.shapeConfig.y),
+      height: this.shapeConfig.height,
+      width: this.shapeConfig.width
     };
 
-    this.currentTarget.setPosition(changedShape);
+    this.currentTarget.setConfig(changedShape);
     this.currentTarget.emit("dragmove", changedShape);
   }
 
